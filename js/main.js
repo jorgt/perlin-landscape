@@ -1,6 +1,6 @@
 requirejs.config({
     //By default load any module IDs from js/lib
-    baseUrl: 'js',
+    baseUrl: 'https://rawgithub.com/jorgt/perlin-landscape/master/js/',
     urlArgs: "bust=" + (new Date()).getTime()
 });
 
