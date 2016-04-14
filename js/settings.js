@@ -139,8 +139,8 @@ define([], function() {
                     top: 300,
                     left: -1200,
                     scale: {
-                        x: 1,
-                        y: 1
+                        x: 0.5,
+                        y: 0.5
                     }
                 },
                 perlin: {
