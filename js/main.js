@@ -4,7 +4,7 @@ requirejs.config({
     urlArgs: "bust=" + (new Date()).getTime()
 });
 
-require(["engine", "resource", "screen", "grid", "settings"], function(
+define(["engine", "resource", "screen", "grid", "settings"], function(
         engine,
         resource,
         screen,
