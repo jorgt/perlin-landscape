@@ -2,6 +2,6 @@
 
 Had some fun with perlin noise and a tiny tile engine. 
 
-![Original](https://raw.githubusercontent.com/jorgt/manipulator/master/img/screenshot.png)
+![Original](https://rawgithub.com/jorgt/manipulator/master/img/screenshot.png)
 
 See it a live [demo](https://jorgt.github.io/perlin-landscape) here. 
