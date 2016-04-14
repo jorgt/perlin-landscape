@@ -8,6 +8,7 @@
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
     <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+    <script data-main="js/main" src="js/libs/require.min.js"></script>
   </head>
   <body>
     <section class="page-header">
@@ -22,6 +23,54 @@
       <h1>
 <a id="demo" class="anchor" href="#demo" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Demo</h1>
 
+   <canvas id="game"></canvas>
+        <script type="text/javascript">
+            var require = {
+                waitSeconds: 15,
+                urlArgs: "bust=" + new Date().getTime()
+            };
+        </script>
+        <script data-main="js/main" src="js/libs/require.min.js"></script>
+        <script>
+            var btn = document.createElement("button");
+            var t = document.createTextNode("pause");
+            btn.appendChild(t);
+            btn.style.position = 'fixed';
+            btn.style.top = '30px';
+            btn.style.left = '15px';
+            btn.onclick = function() {
+                window.game.engine.toggle();
+            }
+            document.body.appendChild(btn);
+            var opt = ['normal', 'normalgrid', 'grid', 'flatgrid', 'experiment'];
+            var style = document.createElement("select");
+            style.style.position = 'fixed';
+            style.style.top = '30px';
+            style.style.left = '80px';
+            for (var i = 0; i < opt.length; i++) {
+                var o = document.createElement('option');
+                o.value = opt[i];
+                o.innerHTML = opt[i];
+                style.appendChild(o);
+            }
+            style.onchange = function(val) {
+                window.game.settings.get(this.value);
+            }
+            document.body.appendChild(style);
+            var range = document.createElement('input');
+            range.type = 'range';
+            range.min = 0;
+            range.max = 100;
+            range.value = 40;
+            range.style.position = 'fixed';
+            range.style.top = '60px';
+            range.style.left = '15px';
+            
+            range.onchange = function() {
+                window.game.grid.setLevel(this.value);
+            }
+            document.body.appendChild(range);
+        </script>
       <footer class="site-footer">
         <span class="site-footer-owner"><a href="https://github.com/jorgt/perlin-landscape">Perlin-landscape</a> is maintained by <a href="https://github.com/jorgt">jorgt</a>.</span>
 
