@@ -136,8 +136,8 @@ define([], function() {
                     }
                 },
                 screen: {
-                    top: 300,
-                    left: -1200,
+                    top: 750,
+                    left: 0,
                     scale: {
                         x: 0.5,
                         y: 0.5
