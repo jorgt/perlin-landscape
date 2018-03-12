@@ -1,4 +1,4 @@
-define([], function() {
+define(["settings"], function(settings) {
 
     window.requestAnimFrame = (function() {
         return  window.requestAnimationFrame ||
@@ -57,6 +57,9 @@ define([], function() {
         draw: function() {
             engine.screen.clear();
             engine.screen.grid(engine.resources, engine.grid.grid);
+            if (settings.onAfterDraw) {
+                settings.onAfterDraw(engine.resources, engine.grid.grid);
+            }
         },
         update: function() {
             engine.grid.recalc();

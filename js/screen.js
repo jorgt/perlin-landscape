@@ -104,6 +104,128 @@ define(['functions', 'settings'], function(func, settings) {
         write: function(text, x, y) {
             //console.log(this.context.font);
             this.context.fillText(text, x, y);
+        },
+        getTileAt: function(mouseX, mouseY, resources, grid) {
+            var l = grid.length;
+            var DEFAULT_SCALE_LEVEL = 0.5; // look at settings.js
+            // translate mouse coordinates
+            mouseX /= DEFAULT_SCALE_LEVEL;
+            mouseY /= DEFAULT_SCALE_LEVEL;
+
+
+            var tileWidth = resources.displayW / 2;
+            var tileHeight = resources.displayH / 2;
+
+            var topCornerPositionX = 4 /*wtf*/ + (this.canvas.width) + settings.option.screen.left + 2 * tileWidth;
+            var topCornerPositionY = -((grid[0].length * resources.displayH) / 2) + settings.option.screen.top - tileWidth;
+
+            var firstTileXShiftAtScreen = topCornerPositionX - l * tileWidth * 2;
+            var firstTileYShiftAtScreenAt0Height = topCornerPositionY + l * tileHeight * 2;
+
+            var ctx = this.canvas.getContext("2d");
+            ctx.lineWidth = 2;
+            ctx.fillStyle="#FF0000";
+            ctx.fillRect(firstTileXShiftAtScreen, firstTileYShiftAtScreenAt0Height,10,10);
+
+            var columnNo = this.getColumn(mouseX, firstTileXShiftAtScreen, tileWidth);
+
+            var tilesInColumn = this.getTilesInColumn(columnNo, l, l);
+
+            var exactTile = this.findExactTile(mouseX, mouseY, tilesInColumn, function(x,y) {
+                return settings.option.grid.gradient(grid[99-x][y]).height;
+            }, firstTileXShiftAtScreen, firstTileYShiftAtScreenAt0Height, tileWidth, tileHeight, columnNo);
+
+            return exactTile ? exactTile : {
+                x: '-', y: '-'
+            };
+        },
+        getColumn: function(mouseX, firstTileXShiftAtScreen, tileWidth) {
+            return Math.floor((mouseX - firstTileXShiftAtScreen) / tileWidth / 2);
+        },
+
+        tileExists: function(x, y, width, height) {
+            return x >= 0 & y >= 0 & x < width & y < height;
+        },
+
+        getTilesInColumn: function(columnNo, width, height) {
+            var startTileX = 0, startTileY = 0;
+            var xShift = true;
+            for (var i = 0; i < columnNo; i++) {
+                if (this.tileExists(startTileX + 1, startTileY, width, height)) {
+                    startTileX++;
+                } else {
+                    if (xShift) {
+                        xShift = false;
+                    } else {
+                        startTileY++;
+                    }
+                }
+            }
+            var tilesInColumn = [];
+            while(this.tileExists(startTileX, startTileY, width, height)) {
+                tilesInColumn.push({x: startTileX, y: startTileY, isLeft: xShift});
+                if (xShift) {
+                    startTileX--;
+                } else {
+                    startTileY++;
+                }
+                xShift = !xShift;
+            }
+            return tilesInColumn;
+        },
+        getTileYIncrementByTileZ: function(tileZ, tileHeight) {
+            return tileZ * tileHeight * 2;
+        },
+
+        findExactTile: function(mouseX, mouseY, tilesInColumn, getTileZ,
+                                firstTileXShiftAtScreen, firstTileYShiftAtScreenAt0Height,
+                                tileWidth, tileHeight, columnNo) {
+            // we built a set of tiles where bottom ones come first
+            // iterate tiles from bottom to top
+            for (var i = tilesInColumn.length - 1; i >= 0; i--) {
+                var tileInfo = tilesInColumn[i];
+                var lineAB = this.findABForTopLineOfTile(tileInfo.x, tileInfo.y, getTileZ(tileInfo.x, tileInfo.y),
+                    tileInfo.isLeft, tileWidth, tileHeight);
+
+                // DEBUG
+                /*
+                console.log(columnNo);
+                var ctx = this.canvas.getContext("2d");
+                ctx.strokeStyle="#665555";
+                ctx.beginPath();
+                ctx.moveTo(firstTileXShiftAtScreen + 0, firstTileYShiftAtScreenAt0Height + lineAB.b);
+                ctx.lineTo(firstTileXShiftAtScreen + 10000, firstTileYShiftAtScreenAt0Height + 10000*lineAB.a + lineAB.b);
+                ctx.stroke();
+                */
+
+                var ctx = this.canvas.getContext("2d");
+                ctx.strokeStyle="#FF0000";
+                ctx.beginPath();
+                ctx.lineTo(firstTileXShiftAtScreen + columnNo*tileWidth*2, firstTileYShiftAtScreenAt0Height + columnNo*tileWidth*2*lineAB.a + lineAB.b);
+                ctx.lineTo(firstTileXShiftAtScreen + (columnNo+1)*tileWidth*2, firstTileYShiftAtScreenAt0Height + (columnNo+1)*tileWidth*2*lineAB.a + lineAB.b);
+                ctx.stroke();
+
+                if ((mouseY - firstTileYShiftAtScreenAt0Height) >
+                    (mouseX - firstTileXShiftAtScreen)*lineAB.a + lineAB.b) {
+                    // WOHOO !!!
+                    return tileInfo;
+                }
+            }
+        },
+
+        findABForTopLineOfTile: function(tileX, tileY, tileZ, isLeftTopLine, tileWidth, tileHeight) {
+            // find a top line ~~~ a,b
+            // y = a * x + b;
+            var a = tileHeight / tileWidth;
+            if (isLeftTopLine) {
+                a = -a;
+            }
+            var b = isLeftTopLine ?
+                tileY * 4 * tileHeight :
+                - (tileX + 1) * 4 * tileHeight;
+            b -= this.getTileYIncrementByTileZ(tileZ, tileHeight) - 11;
+
+            return {a: a, b: b};
         }
     };
 
