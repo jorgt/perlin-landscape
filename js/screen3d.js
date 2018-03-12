@@ -131,6 +131,11 @@ define(['functions', 'settings'], function(func, settings) {
         write: function(text, x, y) {
             //console.log(this.context.font);
             this.context.fillText(text, x, y);
+        },
+        getTileAt: function(x, y) {
+            return {
+                x: "mock", y: "mock"
+            }
         }
     };
 
