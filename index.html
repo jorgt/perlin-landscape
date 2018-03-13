@@ -38,13 +38,11 @@ and open the template in the editor.
                 window.game.engine.toggle();
             }
             document.body.appendChild(btn);
-
             var opt = ['normal', 'normalgrid', 'grid', 'flatgrid', 'experiment'];
             var style = document.createElement("select");
             style.style.position = 'fixed';
             style.style.top = '30px';
             style.style.left = '80px';
-            style.style.width = '90px';
             for (var i = 0; i < opt.length; i++) {
                 var o = document.createElement('option');
                 o.value = opt[i];
@@ -55,35 +53,6 @@ and open the template in the editor.
                 window.game.settings.get(this.value);
             }
             document.body.appendChild(style);
-
-            var mousePositionView = document.createElement("div");
-            mousePositionView.innerHTML = "[?; ?]";
-            mousePositionView.style.position = 'fixed';
-            mousePositionView.style.top = '30px';
-            mousePositionView.style.left = '180px';
-            document.body.appendChild(mousePositionView);
-            // HACK!
-            var mousePosition = {x:0, y:0};
-            document.getElementById("game").addEventListener("mousemove", function (e) {
-                mousePosition = {
-                    x: e.clientX,
-                    y: e.clientY
-                };
-                updatePosition();
-            });
-            var resources, grid;
-            setTimeout(function() {
-                window.game.settings.onAfterDraw = function (_resources, _grid) {
-                    resources = _resources;
-                    grid = _grid;
-                    updatePosition();
-                };
-            }, 500);
-
-            function updatePosition() {
-                var tile = window.game.engine.screen.getTileAt(mousePosition.x, mousePosition.y, resources, grid);
-                mousePositionView.innerHTML = "[" + tile.x + "; " + tile.y + "]";
-            }
             var range = document.createElement('input');
             range.type = 'range';
             range.min = 0;
@@ -95,7 +64,7 @@ and open the template in the editor.
             
             range.onchange = function() {
                 window.game.grid.setLevel(this.value);
-            };
+            }
             document.body.appendChild(range);
         </script>
     </body>

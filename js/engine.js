@@ -57,9 +57,6 @@ define(["settings"], function(settings) {
         draw: function() {
             engine.screen.clear();
             engine.screen.grid(engine.resources, engine.grid.grid);
-            if (settings.onAfterDraw) {
-                settings.onAfterDraw(engine.resources, engine.grid.grid);
-            }
         },
         update: function() {
             engine.grid.recalc();
